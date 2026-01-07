@@ -8,9 +8,11 @@ import channelRepository from '../repositiorires/channelRepository.js';
 
 
 const isUserAdminOfWorkspace = (workspace, userId) => {
-    return workspace.member.find(
-        (member) => member.memberId.toString() === userId && member.role === 'admin'
+    const response = workspace.members.find(
+        (member) => (member.memberId.toString() === userId ||
+            member.memberId._id.toString() === userId) && member.role === 'admin'
     );
+    return response;
 };
 
 const IsUserMemberOfWorkspace = (workspace, userId) => {
@@ -106,10 +108,10 @@ export const getWorkspaceService = async (workspaceId, userId)=>{
             });
         }
         const isMember = IsUserMemberOfWorkspace(workspace, userId);
-        if (!isMember) {
+        if (isMember) {
             throw new ClientError({
-                explaination: 'user is not a member of workspace',
-                message: 'user is not a member of workspace',
+                explaination: 'user is already member of workspace',
+                message: 'user is already member of workspace',
                 statuscode: StatusCodes.UNAUTHORIZED
             });
         }
@@ -170,7 +172,7 @@ export const updateWorkspaceServices = async (workspaceId, workspaceData, userId
         throw error;
     }
 };
-export const addMemberToWorkspaceService = async (workspaceId, memberId, role) => {
+export const addMemberToWorkspaceService = async (workspaceId, memberId, role,userId) => {
     try {
         const workspace = await workspaceRepository.getById(workspaceId);
         if (!workspace) {
@@ -178,6 +180,14 @@ export const addMemberToWorkspaceService = async (workspaceId, memberId, role) =
                 explaination: 'invalid data sent from user',
                 message: 'workspace not found',
                 statuscode: StatusCodes.NOT_FOUND
+            });
+        }
+        const isAdmin = isUserAdminOfWorkspace(workspace, userId);
+        if (!isAdmin) {
+            throw new ClientError({
+                explanation: 'User is not an admin of the workspace',
+                message: 'User is not an admin of the workspace',
+                statusCode: StatusCodes.UNAUTHORIZED
             });
         }
         const isValidUser = await userRepository(memberId);
