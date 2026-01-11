@@ -12,14 +12,14 @@ export const validate = (schema) => {
             let errorMessage = '';
             error.errors.forEach((key) => {
                 explaination.push(key.path[0] + ' ' + key.message);
-                errorMessage += ':' + key.path[0] + ' '+key.message;
+                errorMessage += ':' + key.path[0] + ' ' + key.message;
             });
             return res.status(StatusCodes.BAD_REQUEST).json(
                 customErrorResponse({
-                    message: 'Validation Error' + error.message,
-                    explaination:explaination
+                    message: 'Validation Error' + errorMessage,
+                    explaination: explaination
                 })
             );
         }
     }
-}
+};

@@ -1,11 +1,13 @@
-import { v4 as uuidv4 } from 'uuid';
-import workspaceRepository from '../repositiorires/workspaceRepository.js';
-import userRepository from '../repositiorires/userRepository.js';
-import ValidationError from '../utils/errors/validationErrors.js';
-import ClientError from '../utils/errors/clientError.js';
 import { StatusCodes } from 'http-status-codes';
-import channelRepository from '../repositiorires/channelRepository.js';
+import { v4 as uuidv4 } from 'uuid';
 
+import { addEmailtoMailQueue } from '../producer/mailQueueProducer.js';
+import channelRepository from '../repositiorires/channelRepository.js';
+import userRepository from '../repositiorires/userRepository.js';
+import workspaceRepository from '../repositiorires/workspaceRepository.js';
+import { workspaceJoinMail } from '../utils/common/mailObject.js';
+import ClientError from '../utils/errors/clientError.js';
+import ValidationError from '../utils/errors/validationErrors.js';
 
 const isUserAdminOfWorkspace = (workspace, userId) => {
     const response = workspace.members.find(
@@ -15,7 +17,7 @@ const isUserAdminOfWorkspace = (workspace, userId) => {
     return response;
 };
 
-const IsUserMemberOfWorkspace = (workspace, userId) => {
+export const IsUserMemberOfWorkspace = (workspace, userId) => {
     return workspace.member.find(
         (member) => member.memberId.toString() === userId
     );
@@ -27,12 +29,11 @@ const isChannelAlreadyPartOfWorkspace = (workspace, channelName) => {
 };
 export const createworkspaceServices = async (workspaceData) => {
     try {
-        const joincode = uuidv4().substring(0, 6).toUpperCase();
-
+        const joinCode = uuidv4().substring(0, 6).toUpperCase();
         const response = await workspaceRepository.create({
             name: workspaceData.name,
             description: workspaceData.description,
-            joincode
+            joinCode:joinCode
         });
         await workspaceRepository.addMemberToWorkspace(
             response._id,
@@ -190,7 +191,7 @@ export const addMemberToWorkspaceService = async (workspaceId, memberId, role,us
                 statusCode: StatusCodes.UNAUTHORIZED
             });
         }
-        const isValidUser = await userRepository(memberId);
+        const isValidUser = await userRepository.getById(memberId);
         if (!isValidUser) {
             throw new ClientError({
                 explaination: 'invalid data send from the user',
@@ -207,6 +208,11 @@ export const addMemberToWorkspaceService = async (workspaceId, memberId, role,us
             });
         }
         const response = await workspaceRepository.addMemberToWorkspace(workspaceId, memberId, role);
+        addEmailtoMailQueue({
+            ...workspaceJoinMail(workspace),
+            to:isValidUser.email
+
+        })
         return response;
     } catch (error) {
         console.log('error occur in addMember service ', error);

@@ -1,11 +1,12 @@
 import express from 'express';
+
 import { addChannelToWorkspaceController, addMemberToWorkspaceController, createworkspaceController, deleteWorkspaceController, getWorkspaceByJoinCodeController, getWorkspaceController, getWorkspaceUserIsMemberOfController, updatedWorkspaceController } from '../../controllers/workspaceController.js';
-import isAuthenticated from '../../middlewares/authMiddleware.js'
+import {isAuthenticated} from '../../middlewares/authMiddleware.js'
+import { addChannelToWorkspaceSchema, addMemberToWorkspaceSchema,createWorkspaceSchema } from '../../Validators/workspaceSchema.js'
 import { validate } from '../../Validators/zodValidators.js';
-import createworkspaceSchema, { addChannelToWorkspaceSchema, addMemberToWorkspaceSchema } from '../../Validators/workspaceSchema.js'
 const router = express.Router();
 
-router.post('/', isAuthenticated, validate(createworkspaceSchema), createworkspaceController);
+router.post('/', isAuthenticated, validate(createWorkspaceSchema), createworkspaceController);
 router.get('/', isAuthenticated, getWorkspaceUserIsMemberOfController);
 router.delete('/:workspaceId', isAuthenticated, deleteWorkspaceController);
 router.get(':workspaceId', isAuthenticated, getWorkspaceController);

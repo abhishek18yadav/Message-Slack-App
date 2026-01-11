@@ -1,15 +1,16 @@
-import Workspace from '../schema/workspace.js';
-import crudRepository from '../repositiorires/crudRepository.js'
-import ClientError from '../utils/errors/clientError.js'
 import { StatusCodes } from 'http-status-codes';
-import User from '../schema/user.js';
+
 import channelRepository from '../repositiorires/channelRepository.js'
+import crudRepository from '../repositiorires/crudRepository.js'
+import User from '../schema/user.js';
+import Workspace from '../schema/workspace.js';
+import ClientError from '../utils/errors/clientError.js'
 
 const workspaceRepository = {
     ...crudRepository(Workspace),
 
     getWorkspaceByName: async function (workspaceName) {
-        const workspace = Workspace.findOne({
+        const workspace = await Workspace.findOne({
             name: workspaceName
         });
         if (!workspace) {
@@ -22,7 +23,7 @@ const workspaceRepository = {
         return workspace;
     },
     getWorkspaceByJoinCode: async function (joincode) {
-        const workspace = Workspace.findOne({
+        const workspace = await Workspace.findOne({
             joincode
         });
         if (!workspace) {
@@ -35,7 +36,7 @@ const workspaceRepository = {
         return workspace;
     },
     addMemberToWorkspace: async function (workspaceId, memberId, role) {
-        const workspace = await Workspace.findOne(workspaceId);
+        const workspace = await Workspace.findById(workspaceId);
         if (!workspace) {
             throw new ClientError({
                 explaination: 'Invalid data sent from client',
@@ -43,7 +44,7 @@ const workspaceRepository = {
                 statuscode: StatusCodes.NOT_FOUND,
             });
         }
-        const isValidUser = await User.findOne(memberId);
+        const isValidUser = await User.findById(memberId);
         if (!isValidUser) {
             throw new ClientError({
                 explaination: 'Invalid data sent from the client',
@@ -51,7 +52,7 @@ const workspaceRepository = {
                 statuscode: StatusCodes.NOT_FOUND
             });
         }
-        const IsMemberAlreadyPartOfWorkspace = Workspace.members.find(
+        const IsMemberAlreadyPartOfWorkspace = workspace.members.find(
             (member) => member.memberId == memberId
         );
         if (IsMemberAlreadyPartOfWorkspace) {

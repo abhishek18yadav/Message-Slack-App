@@ -1,8 +1,10 @@
+import bcrypt from 'bcrypt';
 import { StatusCodes } from 'http-status-codes';
+
 import userRepository from '../repositiorires/userRepository.js'
+import {createJWT} from '../utils/common/authUtils.js'
 import ClientError from '../utils/errors/clientError.js';
 import ValidationError from '../utils/errors/validationErrors.js';
-import {createJWT} from '../utils/common/authUtils.js'
 
 export const signUpService = async(data) => {
     try {
@@ -32,9 +34,10 @@ export const signInServices = async (data) => {
             })
         }
         const inMatch = bcrypt.compareSync(data.password, user.password);
-        if (user.password !== data.password) {
+        if (inMatch) {
+            console.log("user is", inMatch);
             throw new ClientError({
-                message: 'invalid password! please try again',
+                message: `invalid password! please try again`,
                 statuscode: StatusCodes.BAD_REQUEST,
                 explaination: 'invalid data sent from client'
             });

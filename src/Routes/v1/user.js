@@ -1,7 +1,8 @@
 import express from 'express';
-import validate from '../../Validators/zodValidators.js'
+
 import {signIn, signup} from "../../controllers/userController.js"
-import { userSignUpSchema , userSignInSchema } from '../../Validators/userSchema.js';
+import { userSignInSchema,userSignUpSchema  } from '../../Validators/userSchema.js';
+import {validate} from '../../Validators/zodValidators.js'
 
 const router = express.Router();
 
