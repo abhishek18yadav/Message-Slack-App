@@ -22,6 +22,6 @@ const messageSchema = new mongooose.Schema({
         ref: 'Workspace',
         reqired: [true, 'workspace id is required']
     }
-});
+},{timestamps:true});
 const message = mongooose.model('message', messageSchema);
 export default message;
