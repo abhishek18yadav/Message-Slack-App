@@ -6,8 +6,8 @@ import createServer from 'http-status-codes'
 import bullServerApater from '../src/config/bullBoardConfig.js'
 import connectDb from './config/mongoconfig.js';
 import apiRouter from './Routes/apiRouter.js';
-import messageHandler from './controllers/messageSocketController.js';
-
+import MessageSocketHandler from './controllers/messageSocketController.js';
+import channelSocketHandler from './controllers/channelSocketController.js';
 
 const app = express();
 const server = createServer(app);
@@ -25,7 +25,8 @@ app.use('/api', apiRouter);
 // }) ----> just a testcase
 
 io.on('connection', (socket) => {
-  messageHandler(io, socket);
+  MessageSocketHandler(io, socket);
+  channelSocketHandler(io, socket);
 })
 
 server.listen(PORT, async () => {
