@@ -1,4 +1,4 @@
-import { JOIN_CHANNEL } from "../utils/common/eventConstants";
+import { JOIN_CHANNEL } from "../utils/common/eventConstants.js";
 
 
 export default function messageHandler(io, socket) {

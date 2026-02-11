@@ -10,9 +10,9 @@ export const validate = (schema) => {
         catch (error) {
             let explaination = [];
             let errorMessage = '';
-            error.errors.forEach((key) => {
-                explaination.push(key.path[0] + ' ' + key.message);
-                errorMessage += ':' + key.path[0] + ' ' + key.message;
+            error.errors.forEach((err) => {
+                explaination.push(err.path[0] + ' ' + err.message);
+                errorMessage += ':' + err.path[0] + ' ' + err.message;
             });
             return res.status(StatusCodes.BAD_REQUEST).json(
                 customErrorResponse({

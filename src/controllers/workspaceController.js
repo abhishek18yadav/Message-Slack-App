@@ -25,6 +25,7 @@ export const createworkspaceController = async (req, res) => {
 export const getWorkspaceUserIsMemberOfController = async (req, res) => {
     try {
         const response = getWorkspaceUserIsMemberOfService(req.user);
+        console.log('response is ', response);
         return res.status(StatusCodes.OK).json(
             successResponse(response, 'workspace fetched successfully')
         );

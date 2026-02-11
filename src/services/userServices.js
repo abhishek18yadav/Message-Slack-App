@@ -47,6 +47,7 @@ export const signInServices = async (data) => {
             password: user.password,
             email: user.email,
             avatar: user.avatar,
+            _id:user._id,
             token: createJWT({id:user._id,email:user.email})
         };
     } catch (error) {

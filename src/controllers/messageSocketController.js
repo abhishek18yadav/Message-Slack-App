@@ -1,6 +1,6 @@
 
-import { createMessageServices } from "../services/messageServices";
-import { NEW_MESSAGE_EVENT, NEW_MESSAGE_RECIEVED_EVENT } from "../utils/common/eventConstants";
+import { createMessageServices } from "../services/messageServices.js";
+import { NEW_MESSAGE_EVENT, NEW_MESSAGE_RECIEVED_EVENT } from "../utils/common/eventConstants.js";
 
 
 export default function messageHandler(io, socket) {
