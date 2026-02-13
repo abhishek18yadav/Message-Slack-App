@@ -24,7 +24,7 @@ export const createworkspaceController = async (req, res) => {
 }
 export const getWorkspaceUserIsMemberOfController = async (req, res) => {
     try {
-        const response = getWorkspaceUserIsMemberOfService(req.user);
+        const response = await getWorkspaceUserIsMemberOfService(req.user);
         console.log('response is ', response);
         return res.status(StatusCodes.OK).json(
             successResponse(response, 'workspace fetched successfully')
@@ -55,11 +55,11 @@ export const deleteWorkspaceController = async (req, res) => {
 }
 export const getWorkspaceController = async (req, res) => {
     try {
-        const response = getWorkspaceService(
+        const response = await getWorkspaceService(
             req.params.workspaceId,
             req.user
         );
-        return res.status(StatusCodes.OK).json(successResponse(response, 'Workspace deleted successfully'));
+        return res.status(StatusCodes.OK).json(successResponse(response, 'Workspace fetched successfully'));
     }
     catch (error) {
         console.log('get workspace controller error', error);

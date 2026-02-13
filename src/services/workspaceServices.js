@@ -18,7 +18,7 @@ const isUserAdminOfWorkspace = (workspace, userId) => {
 };
 
 export const IsUserMemberOfWorkspace = (workspace, userId) => {
-    return workspace.member.find(
+    return workspace.members.find(
         (member) => member.memberId.toString() === userId
     );
 }
@@ -109,10 +109,10 @@ export const getWorkspaceService = async (workspaceId, userId)=>{
             });
         }
         const isMember = IsUserMemberOfWorkspace(workspace, userId);
-        if (isMember) {
+        if ( !isMember) {
             throw new ClientError({
-                explaination: 'user is already member of workspace',
-                message: 'user is already member of workspace',
+                explaination: 'user is not already member of workspace',
+                message: 'user is not already member of workspace',
                 statuscode: StatusCodes.UNAUTHORIZED
             });
         }

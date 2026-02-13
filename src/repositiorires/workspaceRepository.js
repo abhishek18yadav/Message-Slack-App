@@ -53,7 +53,7 @@ const workspaceRepository = {
             });
         }
         const IsMemberAlreadyPartOfWorkspace = workspace.members.find(
-            (member) => member.memberId == memberId
+            (member) => member.memberId === memberId
         );
         if (IsMemberAlreadyPartOfWorkspace) {
             throw new ClientError({
@@ -71,7 +71,7 @@ const workspaceRepository = {
         return workspace;
     },
     addChannelToWorkspace: async function (workspaceId, channelName) {
-        const workspace = await Workspace.findOne(workspaceId).populate('channels');
+        const workspace = await Workspace.findById(workspaceId).populate('channels');
          if (!workspace) {
             throw new ClientError({
                 explaination: 'Invalid data sent from client',
