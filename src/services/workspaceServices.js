@@ -19,7 +19,7 @@ const isUserAdminOfWorkspace = (workspace, userId) => {
 
 export const IsUserMemberOfWorkspace = (workspace, userId) => {
     return workspace.members.find(
-        (member) => member.memberId.toString() === userId
+        (member) => {return member.memberId._id.toString() === userId ;}
     );
 }
 const isChannelAlreadyPartOfWorkspace = (workspace, channelName) => {
@@ -100,7 +100,7 @@ export const deleteWorkspaceService = async (workspaceId, userId) => {
 }
 export const getWorkspaceService = async (workspaceId, userId)=>{
     try {
-        const workspace = await workspaceRepository.getById(workspaceId);
+        const workspace = await workspaceRepository.getWorkspaceDetailsById(workspaceId);
         if (!workspace) {
             throw new ClientError({
                 explaination: 'Invalid data sent from client',
@@ -108,6 +108,7 @@ export const getWorkspaceService = async (workspaceId, userId)=>{
                 statuscode: StatusCodes.NOT_FOUND
             });
         }
+        console.log("getWorkspaceDetailsById ", workspace);
         const isMember = IsUserMemberOfWorkspace(workspace, userId);
         if ( !isMember) {
             throw new ClientError({
@@ -260,3 +261,30 @@ export const addChannelToWorkspaceService = async (workspaceId, channelName, use
         throw error;
     }
 };
+export const getAllChannelsInWorkspaceByIdServices = async (workspaceId) => {
+    try {
+        const workspace = await workspaceRepository.getWorkspaceDetailsById(workspaceId);
+        if (!workspace) {
+            throw new ClientError({
+                explanation: 'Invalid data sent from the client',
+                message: 'Workspace not found',
+                statusCode: StatusCodes.NOT_FOUND
+            });
+        }
+        const response = await workspaceRepository.getAllChannelsbyworkspaceId(workspaceId);
+        return response;
+    } catch (error) {
+        console.log('error in getAllChannelsInWorkspaceById', error);
+        throw error;
+    }
+}
+export const resetWorkspaceJoinCodeService = async (workspaceId, userId) => {
+    try {
+        const newJoinCode = uuidv4().substring(0, 6).toUpperCase();
+        const updatedWorkspace = await updateWorkspaceServices(workspaceId, { joinCode: newJoinCode }, userId);
+        return updatedWorkspace;
+    } catch (error) {
+        console.log("resetWorkspaceJoinCodeService error", error);
+        throw error;
+    }
+}

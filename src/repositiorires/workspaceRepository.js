@@ -92,7 +92,7 @@ const workspaceRepository = {
         const channel = await channelRepository.create({name:channelName, workspaceId: workspaceId});
         workspace.channels.push(channel);
         await workspace.save();
-
+        console.log("chanelles in workspace are", workspace);
         return workspace;
     },
     fetchAllWorkspaceByMemberId: async function (memberId) {
@@ -107,6 +107,10 @@ const workspaceRepository = {
             .populate('channels');
         
         return workspace;
+    },
+    getAllChannelsbyworkspaceId: async function (workspaceId) {
+        const response = await Workspace.findById(workspaceId).populate('channels','name');
+        return response;
     }
 };
 export default workspaceRepository;
