@@ -22,9 +22,9 @@ const workspaceRepository = {
         }
         return workspace;
     },
-    getWorkspaceByJoinCode: async function (joincode) {
+    getWorkspaceByJoinCode: async function (joinCode) {
         const workspace = await Workspace.findOne({
-            joincode
+          joinCode
         });
         if (!workspace) {
             throw new ClientError({

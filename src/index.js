@@ -14,7 +14,11 @@ import apiRouter from './Routes/apiRouter.js';
 const app = express();
 const server = createServer(app);
 const PORT = 3000;
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin:'*'
+  }
+});
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/ui', bullServerApater.getRouter());

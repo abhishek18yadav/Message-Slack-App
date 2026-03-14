@@ -35,7 +35,6 @@ export const signInServices = async (data) => {
         }
         const inMatch = bcrypt.compareSync(data.password, user.password);
         if (inMatch) {
-            console.log("user is", inMatch);
             throw new ClientError({
                 message: `invalid password! please try again`,
                 statuscode: StatusCodes.BAD_REQUEST,

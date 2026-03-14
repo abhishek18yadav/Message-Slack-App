@@ -81,7 +81,6 @@ export const deleteWorkspaceService = async (workspaceId, userId) => {
                 statuscode: StatusCodes.NOT_FOUND
             });
         }
-        console.log(workspace.members, userId);
         const IsAllowed = isUserAdminOfWorkspace(workspace, userId);
         if (IsAllowed) {
             await channelRepository.deleteMany(workspace.channels);
@@ -286,5 +285,37 @@ export const resetWorkspaceJoinCodeService = async (workspaceId, userId) => {
     } catch (error) {
         console.log("resetWorkspaceJoinCodeService error", error);
         throw error;
+    }
+}
+export const joinWorkspaceByJoinCodeServices = async (workspaceId, joinCode, userId) => {
+    try {
+        
+      const workspace = await workspaceRepository.getById(workspaceId);
+      if (!workspace) {
+        throw new ClientError({
+          explanation: 'Invalid data sent from the client',
+          message: 'Workspace not found',
+          statusCode: StatusCodes.NOT_FOUND
+        });
+      }
+      const workspaceToJoin =
+            await workspaceRepository.getWorkspaceByJoinCode(joinCode);
+        console.log('here the workspace ID is', workspaceToJoin);
+      if (!workspaceToJoin) {
+        throw new ClientError({
+          explanation: 'Invalid joinCode sent from the client',
+          message: 'joinCode not found',
+          statusCode: StatusCodes.NOT_FOUND
+        });
+      }
+      const updatedWorkspace = await workspaceRepository.addMemberToWorkspace(
+        workspaceToJoin?._id,
+        userId,
+        'member'
+      );
+      return updatedWorkspace;
+    } catch (error) {
+      console.log('joinWorkspaceByJoinCodeServices error', error);
+      throw error;
     }
 }
