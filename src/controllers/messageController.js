@@ -4,7 +4,7 @@ import {getMessageServices} from '../services/messageServices.js';
 import successResponse, { customErrorResponse, internalErrorResponse } from '../utils/common/responseObjects.js';
 export const getMessageController = async (req, res) => {
     try {
-        const response = getMessageServices(
+        const response = await getMessageServices(
             {
                 channelId: req.params.channelId
             },

@@ -28,5 +28,7 @@ export const getMessageServices = async (messageParams, page, limit,user) => {
 };
 export const createMessageServices = async (message) => {
     const newMessage = await messageRepository.create(message);
-    return newMessage;
+    // Populate senderId so username and avatar are available in the response
+    const populatedMessage = await newMessage.populate('senderId', 'username email avatar');
+    return populatedMessage;
 }
