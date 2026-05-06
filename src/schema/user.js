@@ -9,7 +9,7 @@ const userSchema = mongoose.Schema({
             /^[a-zA-Z0-9]+$/,
             'username must contain letters and numbers only'
         ],
-        avatar: {
+    avatar: {
             type:String
         }
     },
@@ -33,7 +33,7 @@ userSchema.pre('save', function saveavatar(next) {
     const salt = bcrypt.genSaltSync(saltRounds);
     const hassehPassword = bcrypt.hash(user.password, salt);
     user.password = hassehPassword;
-    user.avatar = ` https://robohash.org/${user.username}`;
+    user.avatar = `https://robohash.org/${user.username}`;
     next();
 })
 
